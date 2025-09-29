@@ -27,7 +27,7 @@ url: "https://albert-kang.github.io" # the base hostname & protocol for your sit
 github_username:  TheAKHub
 
 # Build settings
-theme: hacker
+theme: jekyll-theme-hacker
 plugins:
   - jekyll-feed
 
