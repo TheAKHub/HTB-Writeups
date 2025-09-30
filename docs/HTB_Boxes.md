@@ -1,3 +1,5 @@
+---
 layout: page
 title: "HTB Lab Writeups"
-permalink: /HTB_Boxes
+permalink: /HTB_Labs
+---
