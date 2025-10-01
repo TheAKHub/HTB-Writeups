@@ -1,5 +1,5 @@
 ---
 layout: page
 title: "HTB Labs"
-permalink: /HTB_Labs
+permalink: /HTB_Labs/
 ---
