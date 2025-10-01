@@ -11,8 +11,8 @@ I want to use this site to log my experience and personal projects in order to f
 
 # ✅ Writeups ✅
 
-If you see this page with styled headings, links, and a post list below, the theme is working.
-
+## [HTB Labs]({{ "/HTB_Labs" | relative_url }})
+## [HTB Sherlocks]({{ "/HTB_Sherlocks" | relative_url }})
 ## [HTB Labs]({{ "/HTB_Labs" | relative_url }})
 
 
