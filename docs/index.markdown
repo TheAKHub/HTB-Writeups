@@ -18,7 +18,7 @@ If you see this page with styled headings, links, and a post list below, the the
 - **Build time (UTC):** `{{ site.time | date: "%Y-%m-%d %H:%M:%S" }}`
 - **Base URL:** `{{ site.baseurl | default: "(none)" }}`
 - **Site URL:** `{{ site.url | default: "(none)" }}`
-- [HTB Labs]({{ "/HTB-Writeups/HTB_Labs" | relative_url }})
+- [HTB Labs]({{ "/HTB_Labs" | relative_url }})
 > Tip: For project pages, set in `_config.yml`:
 > ```
 > url: "https://theakhub.github.io"
