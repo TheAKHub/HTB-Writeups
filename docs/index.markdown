@@ -6,24 +6,15 @@ layout: default
 title: Home
 ---
 
-# Writeups
+Hello! my name is Albert Kang and if you are reading this, you somehow found your way to the AK Hub. This is where I will store all my writeups on machines I do. This can be from HTB Labs, Sherlocks, or future CTFs I particiate in.
+I want to use this site to log my experience and personal projects in order to further my growth in the cybersecurity field. If you are interested, check out some of my write ups below!
 
-# ✅ Jekyll + Hacker Theme Smoke Test
+# ✅ Writeups ✅
 
 If you see this page with styled headings, links, and a post list below, the theme is working.
 
-## Basics
+## [HTB Labs]({{ "/HTB_Labs" | relative_url }})
 
-- **Layout in use:** `{{ page.layout }}`
-- **Build time (UTC):** `{{ site.time | date: "%Y-%m-%d %H:%M:%S" }}`
-- **Base URL:** `{{ site.baseurl | default: "(none)" }}`
-- **Site URL:** `{{ site.url | default: "(none)" }}`
-- [HTB Labs]({{ "/HTB_Labs" | relative_url }})
-> Tip: For project pages, set in `_config.yml`:
-> ```
-> url: "https://theakhub.github.io"
-> baseurl: "/HTB-Writeups"
-> ```
 
 ## Internal Links (checks `relative_url`)
 
