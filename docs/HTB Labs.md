@@ -1,5 +1,5 @@
 ---
 layout: page
-title: "HTB Lab Writeups"
+title: "HTB Labs"
 permalink: /HTB_Labs
 ---
