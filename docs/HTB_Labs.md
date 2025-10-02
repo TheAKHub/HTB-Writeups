@@ -4,7 +4,7 @@ permalink: /HTB_Labs/
 ---
 ## Easy Boxes
 - [Forest]({{ "/Forest" | relative_url }})
-- [Forest]({{ "/Union" | relative_url }})
-- [Forest]({{ "/Soccer" | relative_url }})
-- [Forest]({{ "/Active" | relative_url }})
-- [Forest]({{ "/Administrator" | relative_url }})
+- [Union]({{ "/Union" | relative_url }})
+- [Soccer]({{ "/Soccer" | relative_url }})
+- [Active]({{ "/Active" | relative_url }})
+- [Administrator]({{ "/Administrator" | relative_url }})
