@@ -13,18 +13,5 @@ I want to use this site to log my experience and personal projects in order to f
 
 ## [HTB Labs]({{ "/HTB_Labs" | relative_url }})
 ## [HTB Sherlocks]({{ "/HTB_Sherlocks" | relative_url }})
-## [HTB Labs]({{ "/HTB_Labs" | relative_url }})
+## [CTF Challenges]({{ "/CTFs" | relative_url }})
 
-
-## Internal Links (checks `relative_url`)
-
-- Home → [Index]({{ "/" | relative_url }})
-- RSS → [feed.xml]({{ "/feed.xml" | relative_url }})
-- Posts directory → [/_posts]({{ "/_posts/" | relative_url }})
-
-## Code Block (syntax highlighting)
-
-```bash
-# ruby & jekyll versions (if building locally)
-ruby -v
-bundle exec jekyll -v
