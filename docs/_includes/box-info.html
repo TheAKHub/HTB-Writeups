@@ -1,0 +1,41 @@
+<div class="box-card">
+  <div class="box-card__header">
+    <h2 class="box-card__title">{{ include.name }}</h2>
+    <a class="box-card__cta" href="https://app.hackthebox.com/">Play on HackTheBox</a>
+  </div>
+
+  <div class="box-grid">
+    <div class="box-row"><span>Name</span><span>{{ include.name }}</span></div>
+    <div class="box-row"><span>Release Date</span><span>{{ include.data.release }}</span></div>
+    <div class="box-row"><span>Retire Date</span><span>{{ include.data.retire }}</span></div>
+    <div class="box-row"><span>OS</span><span>{{ include.data.os }}</span></div>
+    <div class="box-row"><span>Base Points</span><span>{{ include.data.base_points }}</span></div>
+
+    <div class="box-row box-row--stack">
+      <span>Rated Difficulty</span>
+      <span>
+        {% if include.data.difficulty_hist %}
+          <img class="box-img" src="{{ include.data.difficulty_hist | relative_url }}" alt="Difficulty histogram">
+        {% else %}<em>—</em>{% endif %}
+      </span>
+    </div>
+
+    <div class="box-row box-row--stack">
+      <span>Radar Graph</span>
+      <span>
+        {% if include.data.radar %}
+          <img class="box-img" src="{{ include.data.radar | relative_url }}" alt="Radar">
+        {% else %}<em>—</em>{% endif %}
+      </span>
+    </div>
+
+    <div class="box-row"><span>1st Blood (User)</span><span>{{ include.data.first_blood_user }}</span></div>
+    <div class="box-row"><span>1st Blood (Root)</span><span>{{ include.data.first_blood_root }}</span></div>
+    <div class="box-row"><span>Creator</span><span>{{ include.data.creator }}</span></div>
+
+    <div class="box-row box-row--stack">
+      <span>Scenario</span>
+      <span class="box-note">{{ include.data.scenario | markdownify }}</span>
+    </div>
+  </div>
+</div>
