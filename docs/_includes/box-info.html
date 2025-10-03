@@ -1,8 +1,10 @@
 <div class="box-card">
   <div class="box-card__header">
     <h2 class="box-card__title">
-  {% if include.data.machine_url %}
-    <a href="{{ include.data.machine_url }}" target="_blank" rel="noopener">{{ include.name }}</a>
+  {% assign label = include.data.machine_name %}
+  {% if include.data.machine_url and label %}
+    <a href="{{ include.data.machine_url }}" target="_blank" rel="noopener">{{ label }}</a>
+    {{ include.name | remove_first: label }}
   {% else %}
     {{ include.name }}
   {% endif %}
