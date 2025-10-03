@@ -1,6 +1,12 @@
 <div class="box-card">
   <div class="box-card__header">
-    <h2 class="box-card__title">{{ include.name }}</h2>
+    <h2 class="box-card__title">
+  {% if include.data.machine_url %}
+    <a href="{{ include.data.machine_url }}" target="_blank" rel="noopener">{{ include.name }}</a>
+  {% else %}
+    {{ include.name }}
+  {% endif %}
+</h2>
     <a class="box-card__cta" href="https://app.hackthebox.com/">Play on HackTheBox</a>
   </div>
 
