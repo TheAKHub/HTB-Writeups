@@ -16,7 +16,9 @@
       <span>
         {% if include.data.difficulty_hist %}
           <img class="box-img" src="{{ include.data.difficulty_hist | relative_url }}" alt="Difficulty histogram">
-        {% else %}<em>—</em>{% endif %}
+        {% else %}
+          <em>—</em>
+        {% endif %}
       </span>
     </div>
 
@@ -25,7 +27,9 @@
       <span>
         {% if include.data.radar %}
           <img class="box-img" src="{{ include.data.radar | relative_url }}" alt="Radar">
-        {% else %}<em>—</em>{% endif %}
+        {% else %}
+          <em>—</em>
+        {% endif %}
       </span>
     </div>
 
