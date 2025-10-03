@@ -11,6 +11,7 @@ box:
   first_blood_user: "00:06:01 — NLTE (Guru)"
   first_blood_root: "00:09:06 — NLTE (Guru)"
   creator: "mirza (Hacker)"
+  machine_url: "https://www.hackthebox.com/machines/administrator"
   scenario: >
     As is common in real-life Windows pentests, you will start the Administrator
     box with credentials for the following account:
