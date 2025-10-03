@@ -2,6 +2,7 @@
 title: "Administrator Writeup"
 permalink: /Administrator/
 box:
+  machine_name: "Administrator"
   release: "09 Nov 2024"
   retire: "19 Apr 2025"
   os: "Windows"
