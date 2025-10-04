@@ -74,5 +74,6 @@ Nmap done: 1 IP address (1dhost up) scanned in 30.16 seconds
 ```
 From the port scan, we can see that this box is most likely a Kerberos Domain Controller (kerberos, ldap, smb). Using the credentials we were given, we use bloodhound to collect data of the DC.
 
+Looking at the 
 ![Olivia_Perms]({{ '/assets/images/administrator/image1.png' | relative_url }})
 
