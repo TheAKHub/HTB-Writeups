@@ -77,3 +77,4 @@ From the port scan, we can see that this box is most likely a Kerberos Domain Co
 Looking at the 
 ![Olivia_Perms]({{ '/assets/images/administrator/image1.png' | relative_url }})
 
+![[Pasted image 20251005192530.png]]
