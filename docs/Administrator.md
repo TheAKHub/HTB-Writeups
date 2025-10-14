@@ -194,5 +194,5 @@ Now having access to ethan's account, I am not able to dcsync the domain to get 
 
 <img width="1490" height="194" alt="image" src="https://github.com/user-attachments/assets/ae86b81f-7c82-4f2b-b114-f5579aef68d2" />
 
+<img width="1035" height="218" alt="image" src="https://github.com/user-attachments/assets/1e482aa3-d833-4316-ba20-996411fc7537" />
 
-<img width="1483" height="193" alt="image" src="https://github.com/user-attachments/assets/5142843e-1289-4b43-8c4f-80cca704b5d2" />
