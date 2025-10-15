@@ -7,16 +7,12 @@ box:
   retire: "05 Sep 2020"
   os: "Windows"
   base_points: "Easy [20]"
-  difficulty_hist: "<img width="59" height="20" alt="image" src="https://github.com/user-attachments/assets/3764241e-d56e-4d9c-aba3-c4c90fab95d9" />"     # optional image
+  difficulty_hist: "/assets/boxes/admin-radar.png"      # optional image
   radar: "/assets/boxes/admin-radar.png"              # optional image
-  first_blood_user: "00:06:01 — NLTE (Guru)"
-  first_blood_root: "00:09:06 — NLTE (Guru)"
-  creator: "mirza (Hacker)"
-  machine_url: "https://www.hackthebox.com/machines/administrator"
-  scenario: >
-    As is common in real-life Windows pentests, you will start the Administrator
-    box with credentials for the following account:
-    **Username:** Olivia **Password:** ichliebedich
+  first_blood_user: "00:57:49 — enjloezz (Omniscient)"
+  first_blood_root: "01:04:46 — qtc (Guru)"
+  creator: "mrb3n8132 (Moderator)"
+  machine_url: "https://www.hackthebox.com/machines/remote"
 ---
 <style>
 .box-card{border:1px solid #2c2c2c;border-radius:10px;padding:1rem 1rem .5rem;background:#121212;box-shadow:0 0 0 1px #000 inset;margin:1.5rem 0}
