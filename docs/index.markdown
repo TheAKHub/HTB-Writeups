@@ -9,6 +9,10 @@ title: Home
 Hello! my name is Albert Kang and if you are reading this, you somehow found your way to the AK Hub. This is where I will store all my writeups on machines I do. This can be from HTB Labs, Sherlocks, or future CTFs I particiate in.
 I want to use this site to log my experience and personal projects in order to further my growth in the cybersecurity field. If you are interested, check out some of my write ups below!
 
+Not all writeups are complete, as I am currently in the process of transitioning all my writeups and notes on this webpage. My HTB Profile is below.
+
+[**HTB Profile**](https://app.hackthebox.com/profile/overview)
+
 # ✅ Writeups ✅
 
 ## [HTB Labs]({{ "/HTB_Labs" | relative_url }})
