@@ -135,7 +135,7 @@ Looking at the ssh port, we get the Linux kernel information
 
 ### Http Website
 Navigating to the home page, we see a webpage that seems to be for a football club.
-<img width="2432" height="800" alt="image" src="https://github.com/user-attachments/assets/1231d4bb-bce0-45d3-ac20-df696cfd7fc5" />
+<img width="2432" height="700" alt="image" src="https://github.com/user-attachments/assets/1231d4bb-bce0-45d3-ac20-df696cfd7fc5" />
 
 The next step was to enumerate for hidden directories and subdomains. I used feroxbuster and ffuf to accomplish this, and the output for each command is shown below.
 
@@ -208,6 +208,16 @@ ________________________________________________
 :: Progress: [114441/114441] :: Job [1/1] :: 192 req/sec :: Duration: [0:11:05] :: Errors: 0 ::
 ```
 
-We see that this website has a directory named `tiny`. Navigating to this directory we are led to a H3K Tiny
+We see that this website has a directory named `tiny`. Navigating to this directory we are led to a login page for a H3K Tiny File Manager.
 <img width="2281" height="700" alt="image" src="https://github.com/user-attachments/assets/68c71ad3-c3e2-407d-b3df-b7cbfda811c7" />
 
+### xmltec-xmlmail
+On port 9091, we see what is mostly a Transmission BitTorrent client web interface open to the public. However, from both the nmap scan and some manual enumeration, we don't get any information that could potentially allow us a foothold into the system.
+
+## Compromise
+Doing some reasearch on this application, we find that there are admin and user default credentials for logging in.
+- admin:admin@123
+- user:12345
+
+Using the admin default credentials we found online, I was able to log into the file manager via admin credentials.
+<img width="2422" height="600" alt="image" src="https://github.com/user-attachments/assets/aec55484-dbd9-4aa8-b9d0-97f41a41b365" />
