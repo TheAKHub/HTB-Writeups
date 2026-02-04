@@ -221,3 +221,5 @@ Doing some reasearch on this application, we find that there are admin and user 
 
 Using the admin default credentials we found online, I was able to log into the file manager via admin credentials.
 <img width="2422" height="600" alt="image" src="https://github.com/user-attachments/assets/aec55484-dbd9-4aa8-b9d0-97f41a41b365" />
+
+At the bottom corner of the webpage, we see that this version of H3K Tiny File Manager is 2.4.3, which is both vulnerable to high severity exploits like `CVE-2022-45476` and 
