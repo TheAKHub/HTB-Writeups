@@ -34,7 +34,8 @@ box:
 
 {% include box-info.html data=page.box name=page.title %}
 
-# Nmap Scan
+# Enumeration
+## Nmap Scan
 ```
 ┌──(kali㉿kali)-[~/Boxes/random_boxes/soccer]
 └─$ nmap -sC -sV 10.129.226.212        
@@ -128,3 +129,11 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
 Nmap done: 1 IP address (1 host up) scanned in 36.71 seconds
 ```
+### SSH
+Looking at the ssh port, we get the Linux kernel information
+- OpenSSH 8.2p1 Ubuntu 4ubuntu0.5
+
+### Http Website
+Navigating to the home page, we see a webpage that seems to be for a football club.
+<img width="2432" height="1183" alt="image" src="https://github.com/user-attachments/assets/1231d4bb-bce0-45d3-ac20-df696cfd7fc5" />
+
