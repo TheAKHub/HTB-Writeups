@@ -207,3 +207,7 @@ ________________________________________________
 
 :: Progress: [114441/114441] :: Job [1/1] :: 192 req/sec :: Duration: [0:11:05] :: Errors: 0 ::
 ```
+
+We see that this website has a directory named `tiny`. Navigating to this directory we are led to a H3K Tiny
+<img width="2281" height="700" alt="image" src="https://github.com/user-attachments/assets/68c71ad3-c3e2-407d-b3df-b7cbfda811c7" />
+
