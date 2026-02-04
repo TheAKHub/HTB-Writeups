@@ -135,5 +135,75 @@ Looking at the ssh port, we get the Linux kernel information
 
 ### Http Website
 Navigating to the home page, we see a webpage that seems to be for a football club.
-<img width="2432" height="1183" alt="image" src="https://github.com/user-attachments/assets/1231d4bb-bce0-45d3-ac20-df696cfd7fc5" />
+<img width="2432" height="800" alt="image" src="https://github.com/user-attachments/assets/1231d4bb-bce0-45d3-ac20-df696cfd7fc5" />
 
+The next step was to enumerate for hidden directories and subdomains. I used feroxbuster and ffuf to accomplish this, and the output for each command is shown below.
+
+**Directory Fuzzing with Feroxbuster**
+```
+┌──(kali㉿kali)-[~/Boxes/random_boxes/soccer]
+└─$ feroxbuster -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -u http://soccer.htb/
+                                                                                                                                                                           
+ ___  ___  __   __     __      __         __   ___
+|__  |__  |__) |__) | /  `    /  \ \_/ | |  \ |__
+|    |___ |  \ |  \ | \__,    \__/ / \ | |__/ |___
+by Ben "epi" Risher 🤓                 ver: 2.13.1
+───────────────────────────┬──────────────────────
+ 🎯  Target Url            │ http://soccer.htb/
+ 🚩  In-Scope Url          │ soccer.htb
+ 🚀  Threads               │ 50
+ 📖  Wordlist              │ /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
+ 👌  Status Codes          │ All Status Codes!
+ 💥  Timeout (secs)        │ 7
+ 🦡  User-Agent            │ feroxbuster/2.13.1
+ 🔎  Extract Links         │ true
+ 🏁  HTTP methods          │ [GET]
+ 🔃  Recursion Depth       │ 4
+───────────────────────────┴──────────────────────
+ 🏁  Press [ENTER] to use the Scan Management Menu™
+──────────────────────────────────────────────────
+403      GET        7l       10w      162c Auto-filtering found 404-like response and created new filter; toggle off with --dont-filter
+404      GET        7l       12w      162c Auto-filtering found 404-like response and created new filter; toggle off with --dont-filter
+200      GET      494l     1440w    96128c http://soccer.htb/ground3.jpg
+200      GET     2232l     4070w   223875c http://soccer.htb/ground4.jpg
+200      GET      711l     4253w   403502c http://soccer.htb/ground2.jpg
+200      GET      809l     5093w   490253c http://soccer.htb/ground1.jpg
+200      GET      147l      526w     6917c http://soccer.htb/
+301      GET        7l       12w      178c http://soccer.htb/tiny => http://soccer.htb/tiny/
+301      GET        7l       12w      178c http://soccer.htb/tiny/uploads => http://soccer.htb/tiny/uploads/
+[###################>] - 18m   659147/661659  6s      found:7       errors:0      
+🚨 Caught ctrl+c 🚨 saving scan state to ferox-http_soccer_htb_-1770236454.state ...
+[###################>] - 18m   659150/661659  6s      found:7       errors:0      
+[####################] - 17m   220546/220546  213/s   http://soccer.htb/ 
+[###################>] - 17m   219411/220546  214/s   http://soccer.htb/tiny/ 
+[###################>] - 17m   219150/220546  214/s   http://soccer.htb/tiny/uploads/ 
+```
+**Subdomain Fuzzing with FFUF**
+```
+┌──(kali㉿kali)-[~/Boxes/random_boxes/soccer]
+└─$ ffuf -w /home/kali/Custom_Wordlists/wordlists/wordlists/discovery/top_subdomains.txt:FUZZ -u http://soccer.htb -H "Host: FUZZ.soccer.htb" -fs 178
+
+        /'___\  /'___\           /'___\       
+       /\ \__/ /\ \__/  __  __  /\ \__/       
+       \ \ ,__\\ \ ,__\/\ \/\ \ \ \ ,__\      
+        \ \ \_/ \ \ \_/\ \ \_\ \ \ \ \_/      
+         \ \_\   \ \_\  \ \____/  \ \_\       
+          \/_/    \/_/   \/___/    \/_/       
+
+       v2.1.0-dev
+________________________________________________
+
+ :: Method           : GET
+ :: URL              : http://soccer.htb
+ :: Wordlist         : FUZZ: /home/kali/Custom_Wordlists/wordlists/wordlists/discovery/top_subdomains.txt
+ :: Header           : Host: FUZZ.soccer.htb
+ :: Follow redirects : false
+ :: Calibration      : false
+ :: Timeout          : 10
+ :: Threads          : 40
+ :: Matcher          : Response status: 200-299,301,302,307,401,403,405,500
+ :: Filter           : Response size: 178
+________________________________________________
+
+:: Progress: [114441/114441] :: Job [1/1] :: 192 req/sec :: Duration: [0:11:05] :: Errors: 0 ::
+```
