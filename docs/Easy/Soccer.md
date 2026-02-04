@@ -4,7 +4,7 @@ permalink: /Soccer/
 box:
   machine_name: "Soccer"
   release: "17 Dec, 2022"
-  retire: "19 Apr 2025"
+  retire: "10 Jun 2023"
   os: "Linux"
   base_points: "Easy [20]"
   difficulty_hist: "/assets/boxes/admin-diff.png"     # optional image
