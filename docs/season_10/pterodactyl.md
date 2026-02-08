@@ -1,3 +1,4 @@
+---
 title: "Soccer Writeup"
 permalink: /Soccer/
 box:
