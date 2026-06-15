@@ -148,4 +148,69 @@ Service Info: OS: Linux; CPE: cpe:/o:linux:linux_kernel
 Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
 Nmap done: 1 IP address (1 host up) scanned in 123.68 seconds
 ```
+## HTTP Port
+When navigating to the web server we arrive at the homepage for facts.
+<img width="1578" height="1118" alt="image" src="https://github.com/user-attachments/assets/63f80aec-8b93-4861-a6dc-62f16605bc24" />
+
+Looking through the immediate directories we don't see anything useful, so we check for hidden directories using feroxbuster.
+
+When we do use feroxbuster, we see that there is an `admin` directory that leads to a login page for this website.
+```
+┌──(kali㉿kali)-[~/Boxes/season_10/facts]
+└─$ feroxbuster -w /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt -u http://facts.htb/      
+                                                                                                                                                               
+ ___  ___  __   __     __      __         __   ___
+|__  |__  |__) |__) | /  `    /  \ \_/ | |  \ |__
+|    |___ |  \ |  \ | \__,    \__/ / \ | |__/ |___
+by Ben "epi" Risher 🤓                 ver: 2.13.1
+───────────────────────────┬──────────────────────
+ 🎯  Target Url            │ http://facts.htb/
+ 🚩  In-Scope Url          │ facts.htb
+ 🚀  Threads               │ 50
+ 📖  Wordlist              │ /usr/share/wordlists/dirbuster/directory-list-2.3-medium.txt
+ 👌  Status Codes          │ All Status Codes!
+ 💥  Timeout (secs)        │ 7
+ 🦡  User-Agent            │ feroxbuster/2.13.1
+ 🔎  Extract Links         │ true
+ 🏁  HTTP methods          │ [GET]
+ 🔃  Recursion Depth       │ 4
+───────────────────────────┴──────────────────────
+ 🏁  Press [ENTER] to use the Scan Management Menu™
+──────────────────────────────────────────────────
+404      GET      121l      443w        -c Auto-filtering found 404-like response and created new filter; toggle off with --dont-filter
+200      GET      124l      552w        -c Auto-filtering found 404-like response and created new filter; toggle off with --dont-filter
+200      GET      129l      132w     3508c http://facts.htb/sitemap
+200      GET        8l       11w      183c http://facts.htb/rss
+200      GET       66l      519w    44082c http://facts.htb/randomfacts/primary-question-mark.png
+200      GET       69l      448w    30396c http://facts.htb/randomfacts/logopage2.png
+404      GET        2l        9w        -c Auto-filtering found 404-like response and created new filter; toggle off with --dont-filter
+404      GET      114l      371w     4836c http://facts.htb/fonts.googleapis.com/
+200      GET      160l      721w    15004c http://facts.htb/animal-sweat
+403      GET        7l       10w      162c http://facts.htb/randomfacts/
+404      GET      114l      371w     4836c http://facts.htb/fonts.googleapis.com/css
+200      GET      160l      733w    14975c http://facts.htb/cute-animals
+200      GET      271l     1166w    19187c http://facts.htb/search
+200      GET      172l      925w    19677c http://facts.htb/dark-chocolate
+200      GET      160l      773w    15365c http://facts.htb/finland-happiest
+200      GET      172l      913w    19727c http://facts.htb/first-impressions
+200      GET      172l      920w    19730c http://facts.htb/animal-ejected
+200      GET      178l      965w    21754c http://facts.htb/dolphin-fact
+200      GET       64l      988w   206540c http://facts.htb/assets/camaleon_cms/image-not-found-fc3c0e66dc61abf74010e63ef65a2e23c4cb40a3320408f2711f82fdc22b503f.png
+200      GET      166l      833w    17324c http://facts.htb/anne-frank
+200      GET      172l      889w    19556c http://facts.htb/cats-attachment
+200      GET        8l     2294w   169312c http://facts.htb/assets/themes/camaleon_first/assets/css/main-41052d2acf5add707cadf8d1c12a89a9daca83fb8178fdd5c9105dc6c566d25d.css
+200      GET     9958l    40904w   330571c http://facts.htb/assets/themes/camaleon_first/assets/js/main-2d9adb006939c9873a62dff797c5fc28dff961487a2bb550824c5bc6b8dbb881.js
+200      GET      281l     1177w    19593c http://facts.htb/page
+302      GET        0l        0w        0c http://facts.htb/admin => http://facts.htb/admin/login
+200      GET      151l      507w    11308c http://facts.htb/post
+404      GET        2l       11w      331c http://facts.htb/randomfacts/%20
+200      GET        0l        0w        0c http://facts.htb/ajax
+200      GET        1l        4w       73c http://facts.htb/up
+404      GET       92l      329w    10149c http://facts.htb/mirror
+200      GET      114l      371w     4836c http://facts.htb/404
+200      GET        1l        2w       33c http://facts.htb/robots
+```
+
+<img width="621" height="1035" alt="image" src="https://github.com/user-attachments/assets/e5e0ad63-9564-4621-81fc-3594775d5f25" />
+
 
