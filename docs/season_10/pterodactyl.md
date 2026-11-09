@@ -1,6 +1,6 @@
 ---
-title: "Soccer Writeup"
-permalink: /Soccer/
+title: "Pterodactyl Writeup"
+permalink: ./pterodactyl.html
 box:
   machine_name: "Soccer"
   release: "17 Dec, 2022"
