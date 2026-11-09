@@ -1,6 +1,6 @@
 ---
 title: "Conversor Writeup"
-permalink: /season_9/conversor.html
+permalink: /season_9/Conversor.html
 box:
   machine_name: "Conversor"
   release: "25 Oct 2025"
