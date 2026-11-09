@@ -15,7 +15,7 @@ Not all writeups are complete, as I am currently in the process of transitioning
 
 # ✅ Writeups ✅
 
-## [HTB Labs]({{ "/HTB_Labs" | relative_url }})
+## [Season 9]({{ "/season_9" | relative_url }})
+## [Season 10]({{ "/season_10" | relative_url }})
 ## [HTB Sherlocks]({{ "/HTB_Sherlocks" | relative_url }})
-## [CTF Challenges]({{ "/CTFs" | relative_url }})
 
