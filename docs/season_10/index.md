@@ -8,4 +8,4 @@ Welcome to my Season 9 machine writeups!
 
 ## Machines
 
-- [Expressway](./Expressway.html)
+- [Pterodactyl](.pterodactyl.html)
