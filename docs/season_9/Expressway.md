@@ -1,6 +1,6 @@
 ---
 title: "Expressway Writeup"
-permalink: /season_9/Expressway.md
+permalink: /season_9/Expressway.html
 box:
   machine_name: "Expressway"
   release: "20 Sep 2025"
