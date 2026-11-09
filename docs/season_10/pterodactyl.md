@@ -1,6 +1,6 @@
 ---
 title: "Pterodactyl Writeup"
-permalink: ./pterodactyl.html
+permalink: /season_10/Expressway.html
 box:
   machine_name: "Soccer"
   release: "17 Dec, 2022"
