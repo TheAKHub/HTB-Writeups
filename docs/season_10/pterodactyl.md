@@ -7,16 +7,10 @@ box:
   retire: "10 Jun 2023"
   os: "Linux"
   base_points: "Easy [20]"
-  difficulty_hist: "/assets/boxes/admin-diff.png"     # optional image
-  radar: "/assets/boxes/admin-radar.png"              # optional image
   first_blood_user: "00:06:01 — NLTE (Guru)"
   first_blood_root: "00:09:06 — NLTE (Guru)"
   creator: "sau123 (Hacker)"
-  machine_url: "https://www.hackthebox.com/machines/soccer"
-  scenario: >
-    As is common in real-life Windows pentests, you will start the Administrator
-    box with credentials for the following account:
-    **Username:** Olivia **Password:** ichliebedich
+  machine_url: "https://www.hackthebox.com/machines/pterodactyl"
 ---
 <style>
 .box-card{border:1px solid #2c2c2c;border-radius:10px;padding:1rem 1rem .5rem;background:#121212;box-shadow:0 0 0 1px #000 inset;margin:1.5rem 0}
